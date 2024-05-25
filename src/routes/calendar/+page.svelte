@@ -9,29 +9,41 @@
 
 <script lang="ts">
     import { page } from "$app/stores"
+    import { onMount } from "svelte"
     import type { CalendarConfig } from "../+page.svelte"
 
     /* ========================================================================================== */
 
-    const config: CalendarConfig = {
-        name: $page.url.searchParams.get("name") || "",
-        birthday: $page.url.searchParams.get("birthday") || "",
-        lifeExpectancy: Number($page.url.searchParams.get("lifeExpectancy")),
-    }
+    let config: CalendarConfig = $state({
+        name: "Default",
+        birthday: "2000-01-01",
+        lifeExpectancy: 85,
+    })
 
-    const years = [...Array(config.lifeExpectancy + 1).keys()]
-    // years.shift() // start at 1
+    const years = $derived([...Array(config.lifeExpectancy + 1).keys()])
 
-    const weeksLived = Math.floor(
-        (new Date().getTime() - new Date(config.birthday).getTime()) / 604800000,
+    const weeksLived = $derived(
+        Math.floor(
+            (new Date().getTime() -
+                new Date(new Date(config.birthday).getFullYear(), 0, 1).getTime()) /
+                604800000,
+        ),
     )
+
+    onMount(() => {
+        config = {
+            name: $page.url.searchParams.get("name") || "",
+            birthday: $page.url.searchParams.get("birthday") || "",
+            lifeExpectancy: Number($page.url.searchParams.get("lifeExpectancy")),
+        }
+    })
 
     /* ========================================================================================== */
 
     function colorWeek(year: number, week: number): string {
         const weeks = year * 52 + week
 
-        if (weeks < weeksLived) return "bg-green-000 border border-green-050"
+        if (weeks <= weeksLived) return "bg-green-000 border border-green-050"
         // if (year >= 65) return "border border-step-300 bg-step-100"
         return "bg-step-100 border border-step-150"
     }
