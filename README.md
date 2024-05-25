@@ -1,1 +1,1 @@
-# lifetime – A "calender" outlining your weeks to live
+# lifetime – A calendar outlining your weeks to live
