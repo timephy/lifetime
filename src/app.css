@@ -8,6 +8,7 @@ html {
     @media (prefers-color-scheme: dark) {
         color-scheme: dark;
     }
+    print-color-adjust: exact;
 }
 
 html,
