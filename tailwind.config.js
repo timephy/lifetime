@@ -12,4 +12,12 @@ export default {
         tui_colors({}),
         tui_components({}),
     ],
+    theme: {
+        extend: {
+            screens: {
+                print: { raw: "print" },
+                screen: { raw: "screen" },
+            },
+        },
+    },
 }

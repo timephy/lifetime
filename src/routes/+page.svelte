@@ -13,41 +13,44 @@
     import { goto } from "$app/navigation"
 
     let form: CalendarConfig = {
-        name: "",
-        birthday: "",
-        lifeExpectancy: 0,
+        name: "Tim",
+        birthday: "2000-04-03",
+        lifeExpectancy: 95,
     }
 
+    let error: string | null = null
+
     function submit() {
+        error = null
         // check form fields format
         if (form.name === "" || form.birthday === "") {
-            alert("Please fill in all fields.")
+            error = "Please fill in all fields."
             return
         }
         if (form.lifeExpectancy <= 19) {
-            alert("Life expectancy must be greater than 19.")
+            error = "Life expectancy must be greater than 19."
             return
         }
         if (form.lifeExpectancy >= 200) {
-            alert("Life expectancy must be less than 200.")
+            error = "Life expectancy must be less than 200."
             return
         }
         if (form.birthday > new Date().toISOString().split("T")[0]) {
-            alert("Birthday must be in the past.")
+            error = "Birthday must be in the past."
             return
         }
 
-        // `as any` to allow `number` type of `lifeExpectancy` instead of `string`
+        // NOTE: `as any` to allow `number` type of `lifeExpectancy` instead of `string`
         goto(`/calendar?${new URLSearchParams(form as any).toString()}`)
     }
 </script>
 
 <div class="flex h-full flex-col items-center justify-center p-6">
-    <div class="card flex flex-col gap-6 p-6">
+    <form class="card flex flex-col gap-6 p-6" onsubmit={submit} method="dialog">
         <!-- {JSON.stringify(form)} -->
         <div class="flex flex-col items-center gap-2 px-4 pt-2">
             <h1 class="font-mono text-3xl font-semibold">lifetime</h1>
-            <p class="text-step-500 text-sm">A calendar outlining your weeks to live.</p>
+            <p class="text-sm text-step-500">A calendar outlining your weeks to live.</p>
         </div>
         <hr />
         <div class="flex flex-col gap-4">
@@ -55,7 +58,7 @@
                 <p>Your Name</p>
                 <input
                     type="text"
-                    class="border-step-150 bg-step-100 outline-blue-000 w-auto rounded-xl border px-3 py-0.5 text-right"
+                    class="w-auto rounded-xl border border-step-150 bg-step-100 px-3 py-0.5 text-right outline-blue-000"
                     bind:value={form.name}
                 />
             </div>
@@ -63,7 +66,7 @@
                 <p>Birthday</p>
                 <input
                     type="date"
-                    class="border-step-150 bg-step-100 outline-blue-000 w-auto rounded-xl border px-3 py-0.5 text-right"
+                    class="w-auto rounded-xl border border-step-150 bg-step-100 px-3 py-0.5 text-right outline-blue-000"
                     bind:value={form.birthday}
                 />
             </div>
@@ -71,12 +74,15 @@
                 <p>Life Expectancy <span class="text-step-500">(years)</span></p>
                 <input
                     type="number"
-                    class="border-step-150 bg-step-100 outline-blue-000 w-20 rounded-xl border px-3 py-0.5 text-right"
+                    class="w-20 rounded-xl border border-step-150 bg-step-100 px-3 py-0.5 text-right outline-blue-000"
                     bind:value={form.lifeExpectancy}
                 />
             </div>
+            {#if error}
+                <p class="text-center text-xs text-red-000">{error}</p>
+            {/if}
         </div>
         <hr />
-        <button class="btn btn-blue" on:click={submit}>Create Calendar</button>
-    </div>
+        <button class="btn btn-blue">Create Calendar</button>
+    </form>
 </div>

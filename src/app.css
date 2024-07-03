@@ -3,11 +3,12 @@
 @tailwind utilities;
 
 html {
-    @apply bg-step-base;
+    @apply screen:bg-step-base;
 
     @media (prefers-color-scheme: dark) {
         color-scheme: dark;
     }
+
     print-color-adjust: exact;
 }
 
