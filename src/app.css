@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================================================== */
+
 html {
     @apply screen:bg-step-base;
 
@@ -15,4 +17,25 @@ html {
 html,
 body {
     @apply h-full;
+}
+
+/* ============================================================================================== */
+
+@keyframes animate-opacity {
+    0% {
+        display: block;
+        opacity: 50%;
+    }
+    40% {
+        display: block;
+        opacity: 100%;
+    }
+    60% {
+        display: block;
+        opacity: 100%;
+    }
+    100% {
+        display: block;
+        opacity: 50%;
+    }
 }

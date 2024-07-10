@@ -20,15 +20,14 @@
         lifeExpectancy: 85,
     })
 
-    const years = $derived([...Array(config.lifeExpectancy + 1).keys()])
+    const agesArray = $derived([...Array(config.lifeExpectancy + 1).keys()])
 
-    const weeksLived = $derived(
-        Math.floor(
-            (new Date().getTime() -
-                new Date(new Date(config.birthday).getFullYear(), 0, 1).getTime()) /
-                604800000,
-        ),
-    )
+    const DAYS_PER_WEEK = 7
+    const WEEKS_PER_YEAR = 52
+    // const weeksPassed = $derived(
+    //     // ceil to round 0 weeks lived to "a length of 1"
+    //     Math.ceil((new Date().getTime() - new Date(config.birthday).getTime()) / MS_PER_WEEK),
+    // )
 
     onMount(() => {
         config = {
@@ -40,12 +39,31 @@
 
     /* ========================================================================================== */
 
-    function colorWeek(year: number, week: number): string {
-        const weeks = year * 52 + week
+    const now = new Date()
 
-        if (weeks < weeksLived) return "week week-green"
-        if (weeks == weeksLived) return "week week-blue"
-        // if (year >= 65) return "border border-step-300 bg-step-100"
+    function classForWeek(year: number, week: number): string {
+        const weekStart = new Date(config.birthday)
+        weekStart.setFullYear(weekStart.getFullYear() + year)
+        weekStart.setDate(weekStart.getDate() + week * DAYS_PER_WEEK)
+        let weekEnd = new Date(weekStart)
+        weekEnd.setDate(weekEnd.getDate() + DAYS_PER_WEEK)
+
+        // NOTE: 52*7 = 364 days, so the last week of the year is longer than 7 days
+        if (week === WEEKS_PER_YEAR - 1) {
+            // extend last week until the birthday
+            weekEnd = new Date(config.birthday)
+            weekEnd.setFullYear(weekEnd.getFullYear() + year + 1)
+        }
+
+        // if (weeks < weeksPassed) return "week week-green"
+        if (weekStart <= now && now < weekEnd) {
+            return "week week-orange screen:animate-[animate-opacity_3s_ease-in-out_infinite]"
+        } else if (weekStart < now) {
+            // if (year < 18) {
+            //     return "week week-blue"
+            // }
+            return "week week-green"
+        }
         return "week week-gray"
     }
 </script>
@@ -61,50 +79,56 @@
                 <span>Life Expectancy: {config.lifeExpectancy}</span>
             </p>
         </div>
+
         <!-- <hr /> -->
+
         <div class="calendar">
-            {#each years as year}
+            {#each agesArray as age}
                 <div class="year">
                     <div class="text">
                         <p>
-                            {year % 5 === 0 ? year : ""}
+                            {age % 5 === 0 ? age : ""}
                         </p>
                     </div>
-                    {#each [...Array(52).keys()] as week}
-                        <div class={colorWeek(year, week)}></div>
+
+                    <!-- ! WEEKS -->
+                    {#each [...Array(WEEKS_PER_YEAR).keys()] as week}
+                        <div class={classForWeek(age, week)}></div>
                     {/each}
+                    <!-- ! WEEKS -->
+
                     <div class="text">
                         <p>
-                            {year % 5 === 0 ? new Date(config.birthday).getFullYear() + year : ""}
+                            {age % 5 === 0 ? new Date(config.birthday).getFullYear() + age : ""}
                         </p>
                     </div>
                 </div>
             {/each}
         </div>
         <!-- <hr /> -->
-        <div class="flex flex-col items-center gap-1">
+        <!-- <div class="flex flex-col items-center gap-1">
             <p
                 class="text-step-700 [&>span]:font-medium [&>span]:text-black [&>span]:dark:text-white"
             >
-                <span>{weeksLived}</span> of your <span>{config.lifeExpectancy * 52}</span> weeks
+                <span>{weeksPassed}</span> of your <span>{config.lifeExpectancy * WEEKS_PER_YEAR}</span> weeks
                 have already passed (<span
-                    >{Math.round((weeksLived / (config.lifeExpectancy * 52)) * 10000) / 100}%</span
+                    >{Math.round((weeksPassed / (config.lifeExpectancy * WEEKS_PER_YEAR)) * 10000) / 100}%</span
                 >).
             </p>
             <p
                 class="text-step-700 [&>span]:font-medium [&>span]:text-black [&>span]:dark:text-white"
             >
                 Your adult life (18–{config.lifeExpectancy} years) is
-                <span>{(config.lifeExpectancy - 18) * 52}</span>
+                <span>{(config.lifeExpectancy - 18) * WEEKS_PER_YEAR}</span>
                 weeks long, of those
-                <span>{weeksLived - 18 * 52}</span>
+                <span>{weeksPassed - 18 * WEEKS_PER_YEAR}</span>
                 have passed (<span
                     >{Math.round(
-                        ((weeksLived - 18 * 52) / ((config.lifeExpectancy - 18) * 52)) * 10000,
+                        ((weeksPassed - 18 * WEEKS_PER_YEAR) / ((config.lifeExpectancy - 18) * WEEKS_PER_YEAR)) * 10000,
                     ) / 100}%</span
                 >).
             </p>
-        </div>
+        </div> -->
         <div class="text-tiny flex justify-center gap-2 text-step-500">
             <a href="/" class="link text-step-500">lifetime.timephy.com</a>
         </div>
