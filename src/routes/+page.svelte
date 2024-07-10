@@ -13,9 +13,9 @@
     import { goto } from "$app/navigation"
 
     let form: CalendarConfig = {
-        name: "Tim",
-        birthday: "2000-04-03",
-        lifeExpectancy: 95,
+        name: "",
+        birthday: "",
+        lifeExpectancy: 0,
     }
 
     let error: string | null = null
