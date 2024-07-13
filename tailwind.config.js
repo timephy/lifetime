@@ -5,14 +5,6 @@ import tui_components from "@timephy/tui-components-tw"
 export default {
     content: ["./src/**/*.{html,js,svelte,ts}"],
     theme: {
-        extend: {},
-    },
-    plugins: [
-        //
-        tui_colors({}),
-        tui_components({}),
-    ],
-    theme: {
         extend: {
             screens: {
                 print: { raw: "print" },
@@ -20,4 +12,9 @@ export default {
             },
         },
     },
+    plugins: [
+        //
+        tui_colors({}),
+        tui_components({}),
+    ],
 }
